@@ -1,0 +1,57 @@
+<ion-header>
+	<ion-navbar class="bar-positive" align-title="center" color="secondary">
+		<ion-title>
+			<!--			Prototype-->
+			<ion-searchbar 
+			[(ngModel)]="searchTerm"
+			[formControl]="searchTermControl"
+			[showCancelButton]=true
+			(ionInput)="filterItems()" 
+			placeholder="Type here..." >
+		</ion-searchbar>
+	</ion-title>
+	<ion-buttons end>
+		<button ion-button icon-only (click)="showFilters()">
+			<ion-icon name="funnel" [style.color]="hasfilter ? 'orange' : 'inherit'"></ion-icon>
+		</button>
+	</ion-buttons>
+</ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+<ion-refresher (ionRefresh)="doRefresh($event)" [pullMin]=90>
+		<ion-refresher-content
+		pullingIcon="arrow-dropdown"
+		pullingText="Pull to refresh"
+		refreshingSpinner="circles"
+		refreshingText="Refreshing...">
+	</ion-refresher-content>
+</ion-refresher>
+
+<ion-list>
+	<button ion-item *ngFor="let feed of feeds" (click)="itemSelected(feed.data.url)">
+		<ion-thumbnail item-left>
+			<img [src]="feed.data.thumbnail">
+		</ion-thumbnail>
+		<ion-label item-right>
+			<h2>{{feed.data.title}}</h2>	
+			<div [ngSwitch]=feed.data.subreddit.toLowerCase()>
+				<p *ngSwitchCase="'askreddit'"><ion-icon name="help-circle"></ion-icon>&nbsp;{{feed.data.domain}}</p>
+				<p *ngSwitchCase="'gaming'"><ion-icon name="logo-playstation"></ion-icon>&nbsp;{{feed.data.domain}}</p>
+				<p *ngSwitchCase="'music'"><ion-icon name="musical-notes"></ion-icon>&nbsp;{{feed.data.domain}}</p>
+				<p *ngSwitchCase="'movies'"><ion-icon name="film"></ion-icon>&nbsp;{{feed.data.domain}}</p>
+				<p *ngSwitchCase="'pics'"><ion-icon name="image"></ion-icon>&nbsp;{{feed.data.domain}}</p>
+				<p *ngSwitchDefault>{{feed.data.domain}}</p>
+			</div>	
+		</ion-label>   
+	</button>
+</ion-list>
+
+<ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+	<ion-infinite-scroll-content 
+	loadingText="Load more data...">	        
+</ion-infinite-scroll-content>
+</ion-infinite-scroll>
+
+</ion-content>
